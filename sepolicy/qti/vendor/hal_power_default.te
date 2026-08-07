@@ -6,3 +6,6 @@ binder_call(hal_power_default, hal_oplus_touch_aidl);
 
 rw_dir_file(hal_power_default, vendor_proc_display)
 rw_dir_file(hal_power_default, vendor_sysfs_sde_crtc)
+
+allow hal_power_default vendor_sysfs_msm_perf:dir { search read open getattr };
+allow hal_power_default vendor_sysfs_msm_perf:file { read open getattr write };
