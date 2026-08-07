@@ -1,1 +1,5 @@
 allow system_app cgroup:dir search;
+
+hal_client_domain(system_app, hal_health)
+hal_client_domain(system_app, hal_memtrack)
+hal_client_domain(system_app, hal_power)
