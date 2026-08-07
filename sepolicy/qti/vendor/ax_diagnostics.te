@@ -1,1 +1,2 @@
 allow ax_diagnostics vendor_sysfs_usb_supply:dir search;
+allow ax_diagnostics vendor_sysfs_usb_supply:file { read open getattr };
