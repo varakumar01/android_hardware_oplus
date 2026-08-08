@@ -1,5 +1,10 @@
 allow system_app cgroup:dir search;
+allow system_app hal_audio_default:binder call;
+allow system_app hal_bootctl_default:binder call;
+allow system_app hal_nfc_default:binder call;
+allow system_app hal_sensors_default:binder call;
 
 hal_client_domain(system_app, hal_health)
 hal_client_domain(system_app, hal_memtrack)
 hal_client_domain(system_app, hal_power)
+r_dir_file(system_app, vendor_sysfs_usb_supply)

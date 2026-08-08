@@ -12,3 +12,8 @@ get_prop(rild, boot_status_prop)
 set_prop(rild, vendor_nw_exported_system_prop)
 
 allow rild cache_file:lnk_file read;
+
+# Silence harmless denial: rild probes /data/ root dir for write access
+# during modem init. AOSP neverallow prevents allow rule on
+# system_data_root_file — rild falls back gracefully without it.
+dontaudit rild system_data_root_file:dir write;
