@@ -4,6 +4,14 @@ allow system_app hal_bootctl_default:binder call;
 allow system_app hal_nfc_default:binder call;
 allow system_app hal_sensors_default:binder call;
 
+allow system_app vendor_hal_usb_qti:binder call;
+allow system_app hal_wifi_supplicant_default:binder call;
+allow system_app hal_wifi_default:binder call;
+allow system_app hal_vibrator_default:binder call;
+allow system_app hal_thermal_default:binder call;
+
+allow system_app vold:binder call;
+
 hal_client_domain(system_app, hal_health)
 hal_client_domain(system_app, hal_memtrack)
 hal_client_domain(system_app, hal_power)
