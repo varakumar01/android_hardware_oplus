@@ -45,6 +45,7 @@ type vendor_olog_file, file_type, data_file_type;
 type vendor_proc_oplus_ctp, fs_type, proc_type;
 type vendor_proc_oplus_scheduler, fs_type, proc_type;
 type vendor_sysfs_cb, fs_type, sysfs_type;
+type vendor_proc_sched_migrate, fs_type, proc_type;
 
 # Pogo pin keyboard
 type vendor_proc_oplus_pogo_keyboard, fs_type, proc_type;

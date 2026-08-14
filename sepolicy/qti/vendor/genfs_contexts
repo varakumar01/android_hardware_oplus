@@ -63,6 +63,9 @@ genfscon proc /task_info/task_sched_info/task_sched_info_enable    u:object_r:ve
 genfscon proc /task_info/task_sched_info/tids_set                  u:object_r:vendor_proc_oplus_ctp:s0
 genfscon proc /task_info/task_sched_info/version                   u:object_r:vendor_proc_oplus_ctp:s0
 genfscon sysfs /module/cpufreq_bouncing                            u:object_r:vendor_sysfs_cb:s0
+genfscon proc /sys/kernel/sched_boost                              u:object_r:vendor_proc_sched_migrate:s0
+genfscon proc /sys/kernel/sched_downmigrate                        u:object_r:vendor_proc_sched_migrate:s0
+genfscon proc /sys/kernel/sched_upmigrate                          u:object_r:vendor_proc_sched_migrate:s0
 
 # Pogo pin keyboard
 genfscon proc /pogopin    u:object_r:vendor_proc_oplus_pogo_keyboard:s0

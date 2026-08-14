@@ -8,3 +8,6 @@ set_prop(vendor_init, vendor_fingerprint_prop)
 set_prop(vendor_init, vendor_oplus_touch_prop)
 set_prop(vendor_init, vendor_thermal_engine_prop)
 set_prop(vendor_init, exported_bluetooth_prop)
+set_prop(vendor_init, vendor_ims_prop)
+
+rw_dir_file(vendor_init, vendor_proc_sched_migrate)
