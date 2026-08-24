@@ -10,9 +10,6 @@ allow system_app hal_wifi_default:binder call;
 allow system_app hal_vibrator_default:binder call;
 allow system_app hal_thermal_default:binder call;
 
-# LTPO Settings
-rw_dir_file(system_app, vendor_sysfs_graphics)
-
 allow system_app vold:binder call;
 
 hal_client_domain(system_app, hal_health)
