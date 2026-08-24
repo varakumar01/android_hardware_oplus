@@ -16,3 +16,10 @@ hal_client_domain(system_app, hal_health)
 hal_client_domain(system_app, hal_memtrack)
 hal_client_domain(system_app, hal_power)
 r_dir_file(system_app, vendor_sysfs_usb_supply)
+
+# DeviceSettings: touchpanel game-mode/edge-touch toggles and vibrator
+# strength control read and write proc/sysfs nodes directly.
+allow system_app vendor_proc_display:dir r_dir_perms;
+allow system_app vendor_proc_display:file rw_file_perms;
+allow system_app sysfs_vibrator:dir r_dir_perms;
+allow system_app sysfs_vibrator:file rw_file_perms;
