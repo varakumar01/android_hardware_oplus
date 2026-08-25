@@ -11,6 +11,7 @@ type vendor_proc_camera, fs_type, proc_type;
 # Charging
 type vendor_proc_charger, fs_type, proc_type;
 type vendor_sysfs_charger, fs_type, sysfs_type;
+type vendor_sysfs_oplus_chg_params, fs_type, sysfs_type;
 type vendor_proc_wireless, fs_type, proc_type;
 
 # Display

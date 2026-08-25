@@ -23,3 +23,10 @@ allow system_app vendor_proc_display:dir r_dir_perms;
 allow system_app vendor_proc_display:file rw_file_perms;
 allow system_app sysfs_vibrator:dir r_dir_perms;
 allow system_app sysfs_vibrator:file rw_file_perms;
+
+# DeviceSettings: USB2 fast-charge toggle writes the oplus_chg module's
+# own force_fast_charge/ffc_val module_params directly (see
+# drivers/power/oplus_chg/oplus_charger.c); these are generically labeled
+# sysfs by default with no dedicated type, unlike the vibrator node above.
+allow system_app vendor_sysfs_oplus_chg_params:dir r_dir_perms;
+allow system_app vendor_sysfs_oplus_chg_params:file rw_file_perms;
