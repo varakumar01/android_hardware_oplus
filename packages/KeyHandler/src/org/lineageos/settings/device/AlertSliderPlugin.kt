@@ -34,12 +34,17 @@ class AlertSliderPlugin : OverlayPlugin {
             override fun onReceive(context: Context, intent: Intent) {
                 when (intent.action) {
                     Intent.ACTION_CONFIGURATION_CHANGED -> {
-                        synchronized(dialogLock) { handler.sendEmptyMessage(MSG_DIALOG_RECREATE) }
+                        // Force recreate unconditionally because Monet overlay changes 
+                        // do not change uiMode, density, or rotation, but DO trigger this intent.
+                        synchronized(dialogLock) { handler.sendEmptyMessage(MSG_DIALOG_FORCE_RECREATE) }
+                    }
+                    Intent.ACTION_OVERLAY_CHANGED -> {
+                        synchronized(dialogLock) { handler.sendEmptyMessage(MSG_DIALOG_FORCE_RECREATE) }
                     }
                     KeyHandler.CHANGED_ACTION -> {
                         synchronized(dialogLock) {
-                            val ringer =
-                                intent.getIntExtra("mode", NONE).takeIf { it != NONE } ?: return
+                            if (!intent.hasExtra("mode")) return
+                            val ringer = intent.getIntExtra("mode", NONE)
 
                             handler
                                 .obtainMessage(
@@ -68,9 +73,17 @@ class AlertSliderPlugin : OverlayPlugin {
                 addAction(KeyHandler.CHANGED_ACTION)
             }
         plugin.registerReceiver(updateReceiver, filter)
+
+        // Overlay changes (Monet) require a package data scheme to be received!
+        val overlayFilter = IntentFilter(Intent.ACTION_OVERLAY_CHANGED).apply {
+            addDataScheme("package")
+        }
+        plugin.registerReceiver(updateReceiver, overlayFilter)
     }
 
     override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
+        handler.dismissDialog()
         pluginContext.unregisterReceiver(updateReceiver)
     }
 
@@ -98,9 +111,12 @@ class AlertSliderPlugin : OverlayPlugin {
                             handleResetTimeout()
                             launchDozePulse()
                             dialog.show()
+                            dialog.refreshBlur()
                         } else {
                             dialog.dismiss()
                         }
+                    } else if (value) {
+                        dialog.refreshBlur()
                     }
 
                     field = value
@@ -113,7 +129,8 @@ class AlertSliderPlugin : OverlayPlugin {
                 MSG_DIALOG_DISMISS -> handleDismiss()
                 MSG_DIALOG_RESET -> handleResetTimeout()
                 MSG_DIALOG_UPDATE -> handleUpdate(msg.obj as NotificationInfo)
-                MSG_DIALOG_RECREATE -> handleRecreate()
+                MSG_DIALOG_RECREATE -> handleRecreate(force = false)
+                MSG_DIALOG_FORCE_RECREATE -> handleRecreate(force = true)
                 else -> {}
             }
 
@@ -144,7 +161,7 @@ class AlertSliderPlugin : OverlayPlugin {
             }
         }
 
-        private fun handleRecreate() {
+        private fun handleRecreate(force: Boolean) {
             val config = context.resources.configuration
             val density = config.densityDpi
             val rotation = context.display.rotation
@@ -155,10 +172,13 @@ class AlertSliderPlugin : OverlayPlugin {
             val layoutChanged = smallestWidth != currSmallestWidth
             val rotationChanged = rotation != currRotation
             val themeChanged = uiMode != currUIMode
-            if (densityChanged || layoutChanged || rotationChanged || themeChanged) {
+            
+            // Force recreation on OVERLAY_CHANGED since uiMode doesn't change during Monet color updates
+            if (force || densityChanged || layoutChanged || rotationChanged || themeChanged) {
                 val wasShowing = showing
 
                 showing = false
+                dialog.dismiss()
                 dialog = AlertSliderDialog(context)
                 lastInfo?.let { dialog.setState(it.position, it.mode) }
 
@@ -171,6 +191,11 @@ class AlertSliderPlugin : OverlayPlugin {
                 currSmallestWidth = smallestWidth
                 currUIMode = uiMode
             }
+        }
+
+        fun dismissDialog() {
+            showing = false
+            dialog.dismiss()
         }
 
         private fun launchDozePulse() {
@@ -192,6 +217,7 @@ class AlertSliderPlugin : OverlayPlugin {
         private const val MSG_DIALOG_RESET = 3
         private const val MSG_DIALOG_UPDATE = 4
         private const val MSG_DIALOG_RECREATE = 5
+        private const val MSG_DIALOG_FORCE_RECREATE = 6
         private const val DIALOG_TIMEOUT = 3000L
 
         // Dialog
