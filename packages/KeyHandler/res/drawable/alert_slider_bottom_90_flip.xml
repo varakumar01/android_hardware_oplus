@@ -10,7 +10,7 @@
     <item>
         <shape>
             <corners
-                android:bottomLeftRadius="@dimen/alert_slider_directional_radius"
+                android:bottomLeftRadius="@dimen/alert_slider_corner_radius"
                 android:bottomRightRadius="@dimen/alert_slider_corner_radius"
                 android:topLeftRadius="@dimen/alert_slider_corner_radius"
                 android:topRightRadius="@dimen/alert_slider_corner_radius" />

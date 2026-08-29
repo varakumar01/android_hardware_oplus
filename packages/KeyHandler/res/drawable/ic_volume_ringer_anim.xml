@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_volume_ringer">
+    <!-- Inner Soundwave: Ocean Wave Tide Motion -->
+    <target android:name="soundwave_inner">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt" name="android:animation">
+            <set android:ordering="together">
+                <objectAnimator android:propertyName="alpha"
+                    android:valueFrom="0.3" android:valueTo="1.0"
+                    android:duration="1200"
+                    android:repeatCount="infinite"
+                    android:repeatMode="reverse"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator android:propertyName="scaleX"
+                    android:valueFrom="0.75" android:valueTo="1.15"
+                    android:duration="1200"
+                    android:repeatCount="infinite"
+                    android:repeatMode="reverse"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator android:propertyName="scaleY"
+                    android:valueFrom="0.75" android:valueTo="1.15"
+                    android:duration="1200"
+                    android:repeatCount="infinite"
+                    android:repeatMode="reverse"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+            </set>
+        </aapt:attr>
+    </target>
+
+    <!-- Outer Soundwave: Staggered Ocean Wave Tide Motion -->
+    <target android:name="soundwave_outer">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt" name="android:animation">
+            <set android:ordering="together">
+                <objectAnimator android:propertyName="alpha"
+                    android:valueFrom="0.2" android:valueTo="1.0"
+                    android:startOffset="400"
+                    android:duration="1200"
+                    android:repeatCount="infinite"
+                    android:repeatMode="reverse"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator android:propertyName="scaleX"
+                    android:valueFrom="0.65" android:valueTo="1.25"
+                    android:startOffset="400"
+                    android:duration="1200"
+                    android:repeatCount="infinite"
+                    android:repeatMode="reverse"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+                <objectAnimator android:propertyName="scaleY"
+                    android:valueFrom="0.65" android:valueTo="1.25"
+                    android:startOffset="400"
+                    android:duration="1200"
+                    android:repeatCount="infinite"
+                    android:repeatMode="reverse"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>

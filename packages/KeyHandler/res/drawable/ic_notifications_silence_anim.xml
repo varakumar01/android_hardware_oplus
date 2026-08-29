@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0
+     Total Silence animation:
+     - Same style as mute: body shakes, slash draws in
+-->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_notifications_silence">
+    <!-- Body shakes like the mute icon -->
+    <target android:name="silence_body">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt" name="android:animation">
+            <set android:ordering="together">
+                <set android:ordering="sequentially">
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="0" android:valueTo="-6"
+                        android:duration="60"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="-6" android:valueTo="5"
+                        android:duration="80"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="5" android:valueTo="-3"
+                        android:duration="90"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="-3" android:valueTo="1.5"
+                        android:duration="100"
+                        android:interpolator="@android:interpolator/decelerate_cubic" />
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="1.5" android:valueTo="0"
+                        android:duration="120"
+                        android:interpolator="@android:interpolator/decelerate_cubic" />
+                </set>
+                <set android:ordering="sequentially">
+                    <objectAnimator android:propertyName="scaleX"
+                        android:valueFrom="1.0" android:valueTo="0.92"
+                        android:duration="120"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="scaleX"
+                        android:valueFrom="0.92" android:valueTo="1.04"
+                        android:duration="140"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="scaleX"
+                        android:valueFrom="1.04" android:valueTo="1.0"
+                        android:duration="190"
+                        android:interpolator="@android:interpolator/decelerate_cubic" />
+                </set>
+            </set>
+        </aapt:attr>
+    </target>
+    <!-- Slash draws in -->
+    <target android:name="silence_slash">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt" name="android:animation">
+            <objectAnimator android:propertyName="trimPathEnd"
+                android:valueFrom="0.0" android:valueTo="1.0"
+                android:duration="350" android:valueType="floatType"
+                android:interpolator="@android:interpolator/fast_out_slow_in" />
+        </aapt:attr>
+    </target>
+</animated-vector>
