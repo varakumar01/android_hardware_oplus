@@ -17,6 +17,7 @@ import android.media.AudioSystem
 import android.os.VibrationAttributes
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.os.SystemClock
 import android.provider.Settings
 import android.view.KeyEvent
 import com.android.internal.os.DeviceKeyHandler
@@ -30,6 +31,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
 
     private val packageContext =
         context.createPackageContext(KeyHandler::class.java.getPackage()!!.name, 0)
+    @Suppress("DEPRECATION")
     private val sharedPreferences
         get() =
             packageContext.getSharedPreferences(
@@ -39,6 +41,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
 
     private val executorService = Executors.newSingleThreadExecutor()
 
+    @Volatile
     private var wasMuted = false
     private val broadcastReceiver =
         object : BroadcastReceiver() {
@@ -85,10 +88,13 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
     }
 
     private fun populateKeyState(firstRun: Boolean) {
-        when (File("/proc/tristatekey/tri_state").readText().trim()) {
+        val state = runCatching { File("/proc/tristatekey/tri_state").readText().trim() }
+            .getOrNull()
+        when (state) {
             "1" -> handleMode(POSITION_TOP, firstRun)
             "2" -> handleMode(POSITION_MIDDLE, firstRun)
             "3" -> handleMode(POSITION_BOTTOM, firstRun)
+            null -> android.util.Log.w(TAG, "Unable to read tri-state key state")
         }
     }
 
@@ -101,24 +107,42 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         }
     }
 
+    /**
+     * Read a slider string setting from Settings.System first (real-time,
+     * cross-process safe), falling back to SharedPreferences for backwards
+     * compatibility on first boot before ButtonSettingsFragment has synced.
+     */
+    private fun getSliderSetting(key: String, defValue: String): String {
+        val sysVal = Settings.System.getString(context.contentResolver, key)
+        if (sysVal != null) return sysVal
+        return sharedPreferences.getString(key, defValue) ?: defValue
+    }
+
+    private fun getSliderBoolSetting(key: String, defValue: Boolean): Boolean {
+        val sysVal = Settings.System.getInt(context.contentResolver, key, -1)
+        if (sysVal != -1) return sysVal != 0
+        return sharedPreferences.getBoolean(key, defValue)
+    }
+
     private fun handleMode(position: Int, firstRun: Boolean) {
-        val muteMedia = sharedPreferences.getBoolean(MUTE_MEDIA_WITH_SILENT, false)
-        val showDialog = sharedPreferences.getBoolean(SHOW_DIALOG, true)
+        val muteMedia = getSliderBoolSetting(MUTE_MEDIA_WITH_SILENT, false)
+        val showDialog = getSliderBoolSetting(SHOW_DIALOG, true)
 
         val mode =
             when (position) {
-                POSITION_TOP -> sharedPreferences.getString(ALERT_SLIDER_TOP_KEY, "0")!!.toInt()
-                POSITION_MIDDLE ->
-                    sharedPreferences.getString(ALERT_SLIDER_MIDDLE_KEY, "1")!!.toInt()
-                POSITION_BOTTOM ->
-                    sharedPreferences.getString(ALERT_SLIDER_BOTTOM_KEY, "2")!!.toInt()
+                POSITION_TOP -> getSliderSetting(ALERT_SLIDER_TOP_KEY, "0").toIntOrNull()
+                    ?: AudioManager.RINGER_MODE_SILENT
+                POSITION_MIDDLE -> getSliderSetting(ALERT_SLIDER_MIDDLE_KEY, "1").toIntOrNull()
+                    ?: AudioManager.RINGER_MODE_VIBRATE
+                POSITION_BOTTOM -> getSliderSetting(ALERT_SLIDER_BOTTOM_KEY, "2").toIntOrNull()
+                    ?: AudioManager.RINGER_MODE_NORMAL
                 else -> return
             }
 
         executorService.submit {
             when (mode) {
                 AudioManager.RINGER_MODE_SILENT -> {
-                    setZenMode(Settings.Global.ZEN_MODE_OFF)
+                    if (!setZenMode(Settings.Global.ZEN_MODE_OFF)) return@submit
                     audioManager.ringerModeInternal = mode
                     if (muteMedia) {
                         audioManager.adjustVolume(AudioManager.ADJUST_MUTE, 0)
@@ -127,7 +151,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                 }
                 AudioManager.RINGER_MODE_VIBRATE,
                 AudioManager.RINGER_MODE_NORMAL -> {
-                    setZenMode(Settings.Global.ZEN_MODE_OFF)
+                    if (!setZenMode(Settings.Global.ZEN_MODE_OFF)) return@submit
                     audioManager.ringerModeInternal = mode
                     if (muteMedia && wasMuted) {
                         audioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, 0)
@@ -137,7 +161,7 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                 ZEN_TOTAL_SILENCE,
                 ZEN_ALARMS_ONLY -> {
                     audioManager.ringerModeInternal = AudioManager.RINGER_MODE_NORMAL
-                    setZenMode(mode - ZEN_OFFSET)
+                    if (!setZenMode(mode - ZEN_OFFSET)) return@submit
                     if (muteMedia && wasMuted) {
                         audioManager.adjustVolume(AudioManager.ADJUST_UNMUTE, 0)
                     }
@@ -175,14 +199,26 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         }
     }
 
-    private fun setZenMode(zenMode: Int) {
+    private fun setZenMode(zenMode: Int): Boolean {
         // Set zen mode
         notificationManager.setZenMode(zenMode, null, TAG)
 
         // Wait until zen mode change is committed
+        val deadline = SystemClock.elapsedRealtime() + ZEN_MODE_TIMEOUT_MS
         while (notificationManager.zenMode != zenMode) {
-            Thread.sleep(10)
+            if (SystemClock.elapsedRealtime() >= deadline) {
+                android.util.Log.e(TAG, "Timed out waiting for Zen mode $zenMode")
+                return false
+            }
+            try {
+                Thread.sleep(ZEN_MODE_POLL_MS)
+            } catch (e: InterruptedException) {
+                Thread.currentThread().interrupt()
+                android.util.Log.w(TAG, "Interrupted waiting for Zen mode $zenMode")
+                return false
+            }
         }
+        return true
     }
 
     private fun sendNotification(position: Int, mode: Int) {
@@ -230,5 +266,8 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
         // Vibration effects
         private val MODE_NORMAL_EFFECT = VibrationEffect.get(VibrationEffect.EFFECT_HEAVY_CLICK)
         private val MODE_VIBRATION_EFFECT = VibrationEffect.get(VibrationEffect.EFFECT_DOUBLE_CLICK)
+
+        private const val ZEN_MODE_TIMEOUT_MS = 5_000L
+        private const val ZEN_MODE_POLL_MS = 10L
     }
 }
