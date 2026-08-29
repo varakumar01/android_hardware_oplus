@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    Copyright (C) 2021 The LineageOS Project
+    Copyright (C) 2021-2026 The LineageOS Project
     SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
     <string-array name="alert_slider_action_entries" translatable="false">
-        <item>@string/alert_slider_mode_none</item>
-        <item>@string/alert_slider_mode_normal</item>
-        <item>@string/alert_slider_mode_vibration</item>
-        <item>@string/alert_slider_mode_silent</item>
-        <item>@string/alert_slider_mode_dnd_priority_only</item>
-        <item>@string/alert_slider_mode_dnd_total_silence</item>
-        <item>@string/alert_slider_mode_dnd_alarms_only</item>
-        <item>@string/alert_slider_mode_torch_on</item>
-        <item>@string/alert_slider_mode_torch_off</item>
+        <item>None</item>
+        <item>Ring</item>
+        <item>Vibrate</item>
+        <item>Silent</item>
+        <item>Priority Only</item>
+        <item>Total Silence</item>
+        <item>Alarms Only</item>
+        <item>Torch On</item>
+        <item>Torch Off</item>
     </string-array>
 
     <string-array name="alert_slider_action_entry_values" translatable="false">
@@ -27,4 +27,33 @@
         <item>8</item>
         <item>9</item>
     </string-array>
+
+    <string-array name="alert_slider_glow_spread_entries" translatable="false">
+        <item>Subtle (4dp)</item>
+        <item>Balanced (8dp)</item>
+        <item>Deep (12dp)</item>
+        <item>Wide (18dp)</item>
+    </string-array>
+
+    <string-array name="alert_slider_glow_spread_entry_values" translatable="false">
+        <item>4</item>
+        <item>8</item>
+        <item>12</item>
+        <item>18</item>
+    </string-array>
+
+    <string-array name="alert_slider_glow_strength_entries" translatable="false">
+        <item>Soft (30%)</item>
+        <item>Medium (60%)</item>
+        <item>Vibrant (80%)</item>
+        <item>Maximum (100%)</item>
+    </string-array>
+
+    <string-array name="alert_slider_glow_strength_entry_values" translatable="false">
+        <item>30</item>
+        <item>60</item>
+        <item>80</item>
+        <item>100</item>
+    </string-array>
+
 </resources>

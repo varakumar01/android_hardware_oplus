@@ -4,6 +4,9 @@
     SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
+    <!-- Toast message when attempting to map the same action to multiple slider positions -->
+    <string name="alert_slider_action_already_mapped">Action already mapped to another position</string>
+
     <!-- Advanced UI settings -->
     <string name="alert_slider_island_title">Dynamic Island Style</string>
     <string name="alert_slider_island_summary">Show popup just below the status bar, centered at the top</string>
@@ -18,6 +21,16 @@
 
     <string name="alert_slider_hide_label_title">Hide Text Label</string>
     <string name="alert_slider_hide_label_summary">Only show the emoji/icon in the popup</string>
+
+    <string name="alert_slider_emoji_top_title">Top Position Emoji</string>
+    <string name="alert_slider_emoji_middle_title">Middle Position Emoji</string>
+    <string name="alert_slider_emoji_bottom_title">Bottom Position Emoji</string>
+
+    <!-- Custom emoji category -->
+    <string name="alert_slider_emoji_category_title">Custom Emoji</string>
+
+    <!-- Help text for custom emoji -->
+    <string name="alert_slider_emoji_help">Type an emoji to replace the default icon for each slider position</string>
 
     <!-- Torch slider modes -->
     <string name="alert_slider_mode_torch_on">Torch On</string>
