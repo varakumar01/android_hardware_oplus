@@ -25,7 +25,6 @@ import java.util.concurrent.Executors
 
 class KeyHandler(private val context: Context) : DeviceKeyHandler {
     private val audioManager = context.getSystemService(AudioManager::class.java)!!
-    private val cameraManager = context.getSystemService(CameraManager::class.java)!!
     private val notificationManager = context.getSystemService(NotificationManager::class.java)!!
     private val vibrator = context.getSystemService(Vibrator::class.java)!!
 
@@ -145,14 +144,26 @@ class KeyHandler(private val context: Context) : DeviceKeyHandler {
                 }
                 TORCH_ON,
                 TORCH_OFF -> {
-                    val cameraId =
-                        cameraManager.cameraIdList.firstOrNull { id ->
-                            cameraManager
-                                .getCameraCharacteristics(id)
-                                .get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
+                    try {
+                        val cameraManager = context.getSystemService(CameraManager::class.java)!!
+                        val ids = cameraManager.cameraIdList
+                        android.util.Log.d(TAG, "Camera IDs available: " + ids.contentToString())
+                        val cameraId =
+                            ids.firstOrNull { id ->
+                                val flashAvailable = cameraManager
+                                    .getCameraCharacteristics(id)
+                                    .get(CameraCharacteristics.FLASH_INFO_AVAILABLE)
+                                android.util.Log.d(TAG, "Camera $id flash available: $flashAvailable")
+                                flashAvailable == true
+                            }
+                        if (cameraId != null) {
+                            android.util.Log.d(TAG, "Setting torch mode $cameraId to ${mode == TORCH_ON}")
+                            cameraManager.setTorchMode(cameraId, mode == TORCH_ON)
+                        } else {
+                            android.util.Log.e(TAG, "No camera with flash found!")
                         }
-                    if (cameraId != null) {
-                        cameraManager.setTorchMode(cameraId, mode == TORCH_ON)
+                    } catch (e: Exception) {
+                        android.util.Log.e(TAG, "Failed to toggle torch", e)
                     }
                 }
             }

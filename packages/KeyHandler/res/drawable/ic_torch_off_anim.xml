@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SPDX-License-Identifier: Apache-2.0 -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_torch_off">
+    <target android:name="torch_body">
+        <aapt:attr xmlns:aapt="http://schemas.android.com/aapt" name="android:animation">
+            <set android:ordering="together">
+                <set android:ordering="sequentially">
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="0" android:valueTo="-14"
+                        android:duration="100"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="-14" android:valueTo="4"
+                        android:duration="120"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="rotation"
+                        android:valueFrom="4" android:valueTo="0"
+                        android:duration="100"
+                        android:interpolator="@android:interpolator/decelerate_cubic" />
+                </set>
+                <set android:ordering="sequentially">
+                    <objectAnimator android:propertyName="scaleX"
+                        android:valueFrom="1.0" android:valueTo="0.9"
+                        android:duration="100"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="scaleX"
+                        android:valueFrom="0.9" android:valueTo="1.05"
+                        android:duration="120"
+                        android:interpolator="@android:interpolator/fast_out_slow_in" />
+                    <objectAnimator android:propertyName="scaleX"
+                        android:valueFrom="1.05" android:valueTo="1.0"
+                        android:duration="100"
+                        android:interpolator="@android:interpolator/decelerate_cubic" />
+                </set>
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>
