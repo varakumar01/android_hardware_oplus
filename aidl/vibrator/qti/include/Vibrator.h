@@ -64,6 +64,7 @@ class LedVibratorDevice {
     bool mDetected;
     int write_value(const char* file, const char* value);
     int write_value(const char* file, int value);
+    int read_value(const char* file, int* value);
 };
 
 class Vibrator : public BnVibrator {
@@ -72,6 +73,7 @@ class Vibrator : public BnVibrator {
     class LedVibratorDevice ledVib;
 
     ndk::ScopedAStatus getCapabilities(int32_t* _aidl_return) override;
+    ndk::ScopedAStatus getResonantFrequency(float* resonantFreqHz) override;
     ndk::ScopedAStatus off() override;
     ndk::ScopedAStatus on(int32_t timeoutMs,
                           const std::shared_ptr<IVibratorCallback>& callback) override;
