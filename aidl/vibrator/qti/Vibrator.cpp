@@ -375,33 +375,6 @@ int LedVibratorDevice::write_value(const char* file, int value) {
     return write_value(file, std::to_string(value).c_str());
 }
 
-int LedVibratorDevice::read_value(const char* file, int* value) {
-    int fd;
-    char buf[NAME_BUF_SIZE];
-    ssize_t ret;
-
-    fd = TEMP_FAILURE_RETRY(open(file, O_RDONLY));
-    if (fd < 0) {
-        ALOGE("open %s failed, errno = %d", file, errno);
-        return -errno;
-    }
-
-    ret = TEMP_FAILURE_RETRY(read(fd, buf, sizeof(buf) - 1));
-    errno = 0;
-    close(fd);
-
-    if (ret <= 0) {
-        return -EIO;
-    }
-    buf[ret] = '\0';
-
-    if (sscanf(buf, "%d", value) != 1) {
-        return -EINVAL;
-    }
-
-    return 0;
-}
-
 int LedVibratorDevice::on(int32_t timeoutMs) {
     int ret = 0;
     if (timeoutMs <= 0) {
@@ -444,7 +417,6 @@ ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {
 
     if (ledVib.mDetected) {
         *_aidl_return |= IVibrator::CAP_PERFORM_CALLBACK;
-        *_aidl_return |= IVibrator::CAP_GET_RESONANT_FREQUENCY;
         ALOGD("QTI Vibrator reporting capabilities: %d", *_aidl_return);
         return ndk::ScopedAStatus::ok();
     }
@@ -454,19 +426,6 @@ ndk::ScopedAStatus Vibrator::getCapabilities(int32_t* _aidl_return) {
     if (ff.mSupportExternalControl) *_aidl_return |= IVibrator::CAP_EXTERNAL_CONTROL;
 
     ALOGD("QTI Vibrator reporting capabilities: %d", *_aidl_return);
-    return ndk::ScopedAStatus::ok();
-}
-
-ndk::ScopedAStatus Vibrator::getResonantFrequency(float* resonantFreqHz) {
-    int f0_tenths_hz;
-
-    // Only the aw8697 LED-class device exposes a calibrated f0; the
-    // input-force-feedback (ff) path has no equivalent sysfs node.
-    if (!ledVib.mDetected || ledVib.read_value(LED_DEVICE "/f0", &f0_tenths_hz) != 0) {
-        return ndk::ScopedAStatus(AStatus_fromExceptionCode(EX_UNSUPPORTED_OPERATION));
-    }
-
-    *resonantFreqHz = f0_tenths_hz / 10.0f;
     return ndk::ScopedAStatus::ok();
 }
 
