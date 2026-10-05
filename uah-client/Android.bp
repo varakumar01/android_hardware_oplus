@@ -7,7 +7,18 @@ cc_library_shared {
     name: "liboplus-uah-client",
     device_specific: true,
     srcs: [
-        "uah-client.c",
+        "uah-client.cpp",
+    ],
+    shared_libs: [
+        "libbinder_ndk",
+        "liblog",
+    ],
+    static_libs: [
+        "android.hardware.power-V1-ndk",
+    ],
+    cflags: [
+        "-Wall",
+        "-Werror",
     ],
     compile_multilib: "64",
 }
