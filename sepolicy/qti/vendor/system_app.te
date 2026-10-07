@@ -30,3 +30,9 @@ allow system_app sysfs_vibrator:file rw_file_perms;
 # sysfs by default with no dedicated type, unlike the vibrator node above.
 allow system_app vendor_sysfs_oplus_chg_params:dir r_dir_perms;
 allow system_app vendor_sysfs_oplus_chg_params:file rw_file_perms;
+# DeviceSettings: motion smoothing sends irisConfigureSet() to the Pixelworks
+# IIris HIDL service, hosted by the iris-service in hal_graphics_composer_default
+# Only the client attribute: hal_client_domain() would also make system_app a
+# hal_graphics_composer in the recovery (non-Treble) policy, and that
+# attribute is allowed self:capability sys_nice, which no app domain may have.
+typeattribute system_app hal_graphics_composer_client;
