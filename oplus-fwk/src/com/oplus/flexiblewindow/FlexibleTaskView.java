@@ -7,6 +7,8 @@ import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.SurfaceView;
 
+import java.util.concurrent.Executor;
+
 public class FlexibleTaskView extends SurfaceView {
 
     public FlexibleTaskView(Context context) {
@@ -35,4 +37,10 @@ public class FlexibleTaskView extends SurfaceView {
         default void onBackPressedOnTaskRoot(int taskId) {}
         default void updateTouchRegion(Region region) {}
     }
+
+    public void setListener(Executor executor, Listener listener) {}
+
+    public void resize(Rect rect) {}
+
+    public void release() {}
 }

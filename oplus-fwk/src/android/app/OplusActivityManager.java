@@ -1,5 +1,6 @@
 package android.app;
 
+import android.content.Intent;
 import android.os.RemoteException;
 
 import com.oplus.app.OplusAppInfo;
@@ -21,5 +22,11 @@ public class OplusActivityManager {
 
     public List<OplusAppInfo> getAllTopAppInfos() throws RemoteException {
         return (ArrayList<OplusAppInfo>) sTopAppInfos.clone();
+    }
+
+    public void startActivity(Intent intent) {}
+
+    public boolean requestDeviceFolded(int state, boolean folded) {
+        return false;
     }
 }

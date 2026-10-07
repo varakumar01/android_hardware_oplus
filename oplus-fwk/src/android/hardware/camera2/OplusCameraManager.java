@@ -4,6 +4,7 @@ import android.content.Context;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.IOplusCameraManager;
 import android.hardware.camera2.impl.CameraMetadataNative;
+import android.hardware.camera2.marshal.MarshalRegistry;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Binder;
@@ -13,9 +14,12 @@ import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.os.SystemProperties;
 import android.util.Log;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /* loaded from: classes.dex */
 public final class OplusCameraManager implements IOplusCameraManager {
@@ -865,5 +869,21 @@ public final class OplusCameraManager implements IOplusCameraManager {
         public void binderDied() {
             this.mRemote = null;
         }
+    }
+
+    public static int getMetadataTag(CaptureResult.Key key) {
+        if (key != null) {
+            return key.getNativeKey().getTag();
+        }
+        return -1;
+    }
+
+    public static <T> T metaDataValueConvert(CaptureResult.Key<T> key, int nativeType,
+            byte[] values) {
+        if (key == null || values == null) {
+            return null;
+        }
+        return MarshalRegistry.getMarshaler(key.getNativeKey().getTypeReference(), nativeType)
+                .unmarshal(ByteBuffer.wrap(values).order(ByteOrder.nativeOrder()));
     }
 }

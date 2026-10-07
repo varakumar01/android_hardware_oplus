@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 public class OplusZoomWindowInfo implements Parcelable {
 
+    public boolean windowShown;
+
     public static final Parcelable.Creator<OplusZoomWindowInfo> CREATOR =
             new Parcelable.Creator<OplusZoomWindowInfo>() {
 
