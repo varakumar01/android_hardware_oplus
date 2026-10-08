@@ -1,0 +1,1 @@
+allow init vendor_proc_swappiness:file w_file_perms;
