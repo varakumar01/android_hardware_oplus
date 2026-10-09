@@ -1,5 +1,7 @@
 package com.oplus.flexiblewindow;
 
+import android.app.Activity;
+
 public class FlexibleWindowManager {
 
     private static FlexibleWindowManager sInstance;
@@ -12,4 +14,8 @@ public class FlexibleWindowManager {
     }
 
     public void removeEmbeddedContainerTask(int taskId, int flags) {}
+
+    public int getFlexibleWindowState(Activity activity) {
+        return 0;
+    }
 }
