@@ -1,3 +1,3 @@
 package com.oplus.view;
 
-public interface IRtAnimationTarget {}
+public interface IRtAnimationTarget extends ITarget {}
